@@ -6,12 +6,11 @@ import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/context/AuthContext';
-import { uploadImageToImgBB } from '@/lib/utils';
-import { Heart, Lock, Mail, User, Building, Upload, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Heart, Lock, Mail, User, Building, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 function RegisterFormContent() {
-  const { register, loginWithGoogle } = useAuth();
+  const { register } = useAuth();
   const searchParams = useSearchParams();
   const initialRole = searchParams.get('role') === 'Vendor' ? 'Vendor' : 'Customer';
 
@@ -20,18 +19,7 @@ function RegisterFormContent() {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'Customer' | 'Vendor'>(initialRole);
   const [businessName, setBusinessName] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
-  const [uploadingImage, setUploadingImage] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,19 +32,6 @@ function RegisterFormContent() {
     }
 
     setSubmitting(true);
-    let uploadedImageUrl = '';
-
-    if (imageFile) {
-      setUploadingImage(true);
-      try {
-        uploadedImageUrl = await uploadImageToImgBB(imageFile);
-      } catch (uploadErr: any) {
-        console.warn('Image upload error:', uploadErr.message);
-        toast.error('Image upload failed, proceeding with default avatar.');
-      } finally {
-        setUploadingImage(false);
-      }
-    }
 
     try {
       await register({
@@ -65,7 +40,6 @@ function RegisterFormContent() {
         password,
         role,
         businessName: role === 'Vendor' ? businessName : undefined,
-        image: uploadedImageUrl,
       });
     } catch {
       // toast shown in context
@@ -204,35 +178,9 @@ function RegisterFormContent() {
               </p>
             </div>
 
-            {/* Optional Profile Image upload (ImgBB) */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
-                Profile Avatar (Optional - Upload via ImgBB)
-              </label>
-              <div className="flex items-center gap-4">
-                {imagePreview ? (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-14 h-14 rounded-2xl object-cover ring-2 ring-rose-300"
-                  />
-                ) : (
-                  <div className="w-14 h-14 rounded-2xl bg-stone-100 border border-dashed border-stone-300 flex items-center justify-center text-stone-400">
-                    <Upload className="w-6 h-6" />
-                  </div>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="text-xs text-stone-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100"
-                />
-              </div>
-            </div>
-
             <button
               type="submit"
-              disabled={submitting || uploadingImage}
+              disabled={submitting}
               className="w-full py-3.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm shadow-md shadow-rose-200 transition flex items-center justify-center gap-2 disabled:opacity-50 mt-4"
             >
               <span>{submitting ? 'Creating Account...' : 'Complete Registration'}</span>
