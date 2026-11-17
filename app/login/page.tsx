@@ -56,7 +56,7 @@ function LoginFormContent() {
     }
   };
 
-  const handleGoogleSimulation = async () => {
+  const handleGoogleLogin = async () => {
     setSubmitting(true);
     try {
       await loginWithGoogle();
@@ -185,7 +185,7 @@ function LoginFormContent() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={handleGoogleSimulation}
+              onClick={handleGoogleLogin}
               disabled={submitting}
               className="w-full py-2.5 px-3 rounded-2xl border border-stone-200 hover:bg-stone-50 text-stone-700 font-semibold text-xs transition flex items-center justify-center gap-2"
             >

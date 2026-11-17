@@ -201,7 +201,7 @@ function RegisterFormContent() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => loginWithGoogle({ role })}
+              onClick={() => loginWithGoogle()}
               disabled={submitting}
               className="w-full py-2.5 px-3 rounded-2xl border border-stone-200 hover:bg-stone-50 text-stone-700 font-semibold text-xs transition flex items-center justify-center gap-2"
             >
@@ -228,7 +228,7 @@ function RegisterFormContent() {
 
             <button
               type="button"
-              onClick={() => loginWithGithub({ role })}
+              onClick={() => loginWithGithub()}
               disabled={submitting}
               className="w-full py-2.5 px-3 rounded-2xl border border-stone-200 hover:bg-stone-50 text-stone-700 font-semibold text-xs transition flex items-center justify-center gap-2"
             >
