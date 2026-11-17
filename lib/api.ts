@@ -39,6 +39,8 @@ export const api = {
       request<any>('/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
     googleSync: (payload: any) =>
       request<any>('/auth/google', { method: 'POST', body: JSON.stringify(payload) }),
+    githubSync: (payload: any) =>
+      request<any>('/auth/github', { method: 'POST', body: JSON.stringify(payload) }),
     getMe: () =>
       request<any>('/auth/me', { method: 'GET' }),
     updateProfile: (payload: any) =>

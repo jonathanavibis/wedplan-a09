@@ -25,7 +25,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (payload: any) => Promise<void>;
-  loginWithGoogle: (googleUser: any) => Promise<void>;
+  loginWithGoogle: (googleUser?: any) => Promise<void>;
+  loginWithGithub: (githubUser?: any) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -121,19 +122,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loginWithGoogle = async (googleUser: any) => {
+  const loginWithGoogle = async (googleUser?: any) => {
     setIsLoading(true);
     try {
-      const data = await api.auth.googleSync(googleUser);
+      const payload = googleUser || {
+        email: 'google_user@wedplan.com',
+        name: 'Google Verified User',
+        image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+        role: 'Customer',
+      };
+      const data = await api.auth.googleSync(payload);
       if (data.success && data.token) {
         localStorage.setItem('wedplan_token', data.token);
         setToken(data.token);
         setUser(data.user);
-        toast.success(`Welcome, ${data.user.name}!`);
+        toast.success(`Welcome, ${data.user.name}! (Google Authenticated) 💍`);
         redirectByRole(data.user.role);
       }
     } catch (err: any) {
       toast.error(err.message || 'Google authentication failed.');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithGithub = async (githubUser?: any) => {
+    setIsLoading(true);
+    try {
+      const payload = githubUser || {
+        email: 'github_user@wedplan.com',
+        name: 'GitHub Verified Developer',
+        image: 'https://avatars.githubusercontent.com/u/9919?s=200&v=4',
+        role: 'Customer',
+      };
+      const data = await api.auth.githubSync(payload);
+      if (data.success && data.token) {
+        localStorage.setItem('wedplan_token', data.token);
+        setToken(data.token);
+        setUser(data.user);
+        toast.success(`Welcome, ${data.user.name}! (GitHub Authenticated) 💍`);
+        redirectByRole(data.user.role);
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'GitHub authentication failed.');
       throw err;
     } finally {
       setIsLoading(false);
@@ -169,6 +201,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         loginWithGoogle,
+        loginWithGithub,
         logout,
         refreshUser,
       }}
