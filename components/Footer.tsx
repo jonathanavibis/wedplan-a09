@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Heart, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
+import { Heart, Mail, Phone, MapPin, Globe, Share2, MessageCircle } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -28,33 +28,28 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Instagram"
                 className="w-9 h-9 rounded-full bg-stone-800 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-stone-400"
               >
-                <Instagram className="w-4 h-4" />
+                <Globe className="w-4 h-4" />
               </a>
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Facebook"
                 className="w-9 h-9 rounded-full bg-stone-800 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-stone-400"
               >
-                <Facebook className="w-4 h-4" />
+                <Share2 className="w-4 h-4" />
               </a>
               <a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noreferrer"
+                aria-label="Twitter"
                 className="w-9 h-9 rounded-full bg-stone-800 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-stone-400"
               >
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noreferrer"
-                className="w-9 h-9 rounded-full bg-stone-800 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-stone-400"
-              >
-                <Youtube className="w-4 h-4" />
+                <MessageCircle className="w-4 h-4" />
               </a>
             </div>
           </div>
