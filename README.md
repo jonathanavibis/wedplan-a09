@@ -1,5 +1,9 @@
 # WedPlan — Luxury Wedding Planning Platform & Marketplace (Frontend Client)
 
+- **Frontend Repository:** [https://github.com/jonathanavibis/wedplan-a09](https://github.com/jonathanavibis/wedplan-a09)
+- **Backend Repository:** [https://github.com/jonathanavibis/wedplan-server-a09](https://github.com/jonathanavibis/wedplan-server-a09)
+- **Live Site Link:** [https://wedplan-a09.vercel.app](https://wedplan-a09.vercel.app)
+
 WedPlan is a role-based wedding planning web application built with **Next.js**, **TypeScript**, **Tailwind CSS**, **Framer Motion**, and **Stripe Checkout**. It empowers engaged couples to discover curated wedding vendors and request bookings, while providing vendors and administrators with tools to manage services, bookings, subscriptions, and platform operations.
 
 ---
