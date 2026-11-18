@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/context/AuthContext';
-import { Heart, Lock, Mail, ArrowRight, Sparkles, UserCheck } from 'lucide-react';
+import { Heart, Lock, Mail, ArrowRight, UserCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 function LoginFormContent() {
@@ -30,27 +30,6 @@ function LoginFormContent() {
       await login(email, password);
     } catch {
       // Error handled by AuthContext
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Demo Login helpers for evaluators
-  const handleQuickLogin = async (role: 'admin' | 'vendor' | 'customer') => {
-    const creds = {
-      admin: { email: 'admin@wedplan.com', password: 'Admin@123456' },
-      vendor: { email: 'vendor@wedplan.com', password: 'Vendor@123456' },
-      customer: { email: 'customer@wedplan.com', password: 'Customer@123456' },
-    };
-
-    setEmail(creds[role].email);
-    setPassword(creds[role].password);
-
-    setSubmitting(true);
-    try {
-      await login(creds[role].email, creds[role].password);
-    } catch {
-      // toast shown in context
     } finally {
       setSubmitting(false);
     }
@@ -94,37 +73,6 @@ function LoginFormContent() {
             <p className="text-xs sm:text-sm text-stone-500">
               Sign in to manage your wedding plans, bookings, or vendor storefront.
             </p>
-          </div>
-
-          {/* Quick Demo Logins for Evaluator */}
-          <div className="bg-rose-50/70 border border-rose-100 rounded-2xl p-3.5 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800 uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-rose-600" />
-              <span>1-Click Test Credentials</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin')}
-                className="py-1.5 px-2 bg-white hover:bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold text-stone-800 transition shadow-2xs"
-              >
-                Admin
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('vendor')}
-                className="py-1.5 px-2 bg-white hover:bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold text-stone-800 transition shadow-2xs"
-              >
-                Vendor
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('customer')}
-                className="py-1.5 px-2 bg-white hover:bg-stone-50 border border-stone-200 rounded-xl text-xs font-semibold text-stone-800 transition shadow-2xs"
-              >
-                Customer
-              </button>
-            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
