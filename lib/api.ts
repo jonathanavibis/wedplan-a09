@@ -99,8 +99,11 @@ export const api = {
   transactions: {
     createCheckoutSession: () =>
       request<any>('/transactions/create-checkout-session', { method: 'POST' }),
-    verifySession: (sessionId: string) =>
-      request<any>('/transactions/verify-session', { method: 'POST', body: JSON.stringify({ sessionId }) }),
+    verifySession: (sessionId: string, extra?: { uid?: string; plan?: string }) =>
+      request<any>('/transactions/verify-session', {
+        method: 'POST',
+        body: JSON.stringify({ sessionId, ...(extra || {}) }),
+      }),
     getVendorTransactions: () =>
       request<any>('/transactions/my-transactions'),
     getAdminAll: () =>

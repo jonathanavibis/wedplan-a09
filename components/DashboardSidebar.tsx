@@ -48,6 +48,7 @@ export default function DashboardSidebar() {
       return [
         { name: 'Overview', href: '/dashboard/customer', icon: LayoutDashboard },
         { name: 'Bookings', href: '/dashboard/customer/bookings', icon: CalendarCheck },
+        { name: 'VIP Concierge', href: '/dashboard/customer/vip', icon: Sparkles },
         { name: 'Settings', href: '/dashboard/profile', icon: Settings },
       ];
     }
@@ -102,9 +103,10 @@ export default function DashboardSidebar() {
               <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">
                 {user.role}
               </span>
-              {user.role === 'Vendor' && user.subscriptionPlan === 'premium' && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                  ★
+              {user.subscriptionPlan === 'premium' && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 flex items-center gap-0.5">
+                  <Sparkles className="w-2.5 h-2.5 fill-amber-500 text-amber-600" />
+                  <span>{user.role === 'Vendor' ? 'PRO' : 'VIP'}</span>
                 </span>
               )}
             </div>
