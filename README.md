@@ -28,7 +28,6 @@ WedPlan is a role-based wedding planning web application built with **Next.js**,
 - **Role-Based Accounts:** Distinct flows for **Customers (Couples)**, **Vendors**, and **Admins**.
 - **Admin Security:** Public registration for admin roles is prohibited.
 - **Password Strength:** Enforced 6+ characters with uppercase and lowercase requirements.
-- **1-Click Test Credentials:** Fast evaluator sign-in buttons for Admin, Vendor, and Customer on `/login`.
 - **ImgBB Image Uploads:** Live image upload support for avatars and service portfolio photography.
 
 ### 3. Dedicated Role Dashboards
@@ -102,9 +101,9 @@ Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🔑 Default Evaluation Credentials
 
-| Role | Email | Password | Quick Action |
+| Role | Email | Password | Access / Scope |
 |---|---|---|---|
-| **Admin** | `admin@wedplan.com` | `Admin@123456` | 1-Click button on `/login` |
-| **Free Vendor** | `vendor@wedplan.com` | `Vendor@123456` | 1-Click button on `/login` |
-| **Premium Vendor** | `premium@wedplan.com` | `Vendor@123456` | 1-Click button on `/login` |
-| **Customer** | `customer@wedplan.com` | `Customer@123456` | 1-Click button on `/login` |
+| **Admin** | `admin@wedplan.com` | `wpadmin123` | Full administrative control & platform moderation |
+| **Free Vendor** | `vendor@wedplan.com` | `Vendor@123456` | 3 service limit, booking requests, upgrade to Premium |
+| **Premium Vendor** | `premium@wedplan.com` | `Vendor@123456` | Unlimited active services, featured badge |
+| **Customer** | `customer@wedplan.com` | `Customer@123456` | Book wedding services, cancel pending requests, VIP Concierge |

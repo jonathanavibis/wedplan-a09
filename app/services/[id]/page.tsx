@@ -27,12 +27,20 @@ import {
 export default function ServiceDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
 
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  // Requirement: Private Route - Service Details redirects to Sign In if unauthenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      toast.error('Please sign in to view wedding service details.');
+      router.replace(`/login?redirect=/services/${id}`);
+    }
+  }, [authLoading, isAuthenticated, id, router]);
 
   // Booking Modal State
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -110,7 +118,7 @@ export default function ServiceDetailsPage({ params }: { params: Promise<{ id: s
     }
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
