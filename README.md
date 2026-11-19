@@ -103,6 +103,6 @@ Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
 | Role | Email | Password | Access / Scope |
 |---|---|---|---|
-| **Admin** | `admin@wedplan.com` | `wpadmin123` (or `Admin@123456`) | Full administrative control & platform moderation |
-| **Vendor** | `vendor@wedplan.com` | `wpvendor123` (or `Vendor@123456`) | Service management, booking requests, upgrade to Premium |
-| **Customer** | `customer@wedplan.com` | `wpcustomer123` (or `Customer@123456`) | Book wedding services, cancel pending requests, VIP Concierge |
+| **Admin** | `admin@wedplan.com` | `Admin@123456` | Full administrative control & platform moderation |
+| **Vendor** | `vendor@wedplan.com` | `Vendor@123456` | Service management, booking requests, upgrade to Premium |
+| **Customer** | `customer@wedplan.com` | `Customer@123456` | Book wedding services, cancel pending requests, VIP Concierge |
