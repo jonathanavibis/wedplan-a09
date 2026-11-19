@@ -153,7 +153,10 @@ export default function ServiceDetailsPage({ params }: { params: Promise<{ id: s
     );
   }
 
-  const images = service.images && service.images.length > 0 ? service.images : ['/placeholder.jpg'];
+  const images =
+    service.images && service.images.length > 0
+      ? service.images.filter(Boolean)
+      : ['https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'];
   const vendor = service.vendorId;
   const isPremiumVendor = vendor?.subscriptionPlan === 'premium';
 
@@ -195,6 +198,10 @@ export default function ServiceDetailsPage({ params }: { params: Promise<{ id: s
               <img
                 src={images[activeImageIndex]}
                 alt={service.serviceName}
+                onError={(e) => {
+                  e.currentTarget.src =
+                    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80';
+                }}
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-semibold text-stone-800 shadow-sm flex items-center gap-1.5">
@@ -214,7 +221,15 @@ export default function ServiceDetailsPage({ params }: { params: Promise<{ id: s
                       activeImageIndex === idx ? 'border-rose-500 scale-105' : 'border-transparent opacity-75 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img
+                      src={img}
+                      alt={`Thumbnail ${idx + 1}`}
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80';
+                      }}
+                      className="w-full h-full object-cover"
+                    />
                   </button>
                 ))}
               </div>

@@ -114,6 +114,10 @@ export default function CustomerBookingsPage() {
                     <img
                       src={booking.serviceId?.images?.[0] || '/placeholder.jpg'}
                       alt="Service"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80';
+                      }}
                       className="w-14 h-14 rounded-2xl object-cover ring-1 ring-stone-200"
                     />
                     <div>
