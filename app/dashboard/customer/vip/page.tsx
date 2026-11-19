@@ -193,14 +193,14 @@ export default function CustomerVipPassPage() {
           </h2>
 
           {/* Monthly / Yearly Billing Toggle */}
-          <div className="bg-stone-100 p-1.5 rounded-full inline-flex items-center gap-1 border border-stone-200 self-start sm:self-auto">
+          <div className="bg-stone-200/80 p-1.5 rounded-full inline-flex items-center gap-1.5 border border-stone-300/80 shadow-xs self-start sm:self-auto">
             <button
               type="button"
               onClick={() => setBillingInterval('monthly')}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 billingInterval === 'monthly'
-                  ? 'bg-white text-stone-900 shadow-sm'
-                  : 'text-stone-600 hover:text-stone-900'
+                  ? 'bg-rose-600 text-white shadow-md scale-102'
+                  : 'text-stone-600 hover:text-stone-900 bg-transparent'
               }`}
             >
               Monthly
@@ -208,16 +208,16 @@ export default function CustomerVipPassPage() {
             <button
               type="button"
               onClick={() => setBillingInterval('yearly')}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 billingInterval === 'yearly'
-                  ? 'bg-rose-600 text-white shadow-sm'
-                  : 'text-stone-600 hover:text-stone-900'
+                  ? 'bg-rose-600 text-white shadow-md scale-102'
+                  : 'text-stone-600 hover:text-stone-900 bg-transparent'
               }`}
             >
               <span>Yearly</span>
               <span
                 className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${
-                  billingInterval === 'yearly' ? 'bg-white text-rose-600' : 'bg-rose-100 text-rose-700'
+                  billingInterval === 'yearly' ? 'bg-white text-rose-600 shadow-2xs' : 'bg-rose-100 text-rose-700'
                 }`}
               >
                 Save 50%
@@ -324,6 +324,32 @@ export default function CustomerVipPassPage() {
                     ? 'Billed monthly ($60/yr)'
                     : 'Only $2.42/mo (Save 50% vs monthly)'}
                 </p>
+
+                {/* Inline Billing Switcher on Customer Premium Card */}
+                <div className="grid grid-cols-2 gap-1.5 p-1 bg-stone-100 rounded-xl mt-3 border border-stone-200">
+                  <button
+                    type="button"
+                    onClick={() => setBillingInterval('monthly')}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      billingInterval === 'monthly'
+                        ? 'bg-rose-600 text-white shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900'
+                    }`}
+                  >
+                    Monthly ($5)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBillingInterval('yearly')}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      billingInterval === 'yearly'
+                        ? 'bg-rose-600 text-white shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900'
+                    }`}
+                  >
+                    Yearly ($29)
+                  </button>
+                </div>
               </div>
 
               <ul className="space-y-2.5 text-xs text-stone-700 pt-3 border-t border-rose-100">
@@ -411,6 +437,32 @@ export default function CustomerVipPassPage() {
                     ? 'Billed monthly ($144/yr)'
                     : 'Only $6.58/mo (Save over 45% vs monthly)'}
                 </p>
+
+                {/* Inline Billing Switcher on Customer VIP Card */}
+                <div className="grid grid-cols-2 gap-1.5 p-1 bg-stone-100 rounded-xl mt-3 border border-stone-200">
+                  <button
+                    type="button"
+                    onClick={() => setBillingInterval('monthly')}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      billingInterval === 'monthly'
+                        ? 'bg-amber-600 text-white shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900'
+                    }`}
+                  >
+                    Monthly ($12)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBillingInterval('yearly')}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      billingInterval === 'yearly'
+                        ? 'bg-amber-600 text-white shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900'
+                    }`}
+                  >
+                    Yearly ($79)
+                  </button>
+                </div>
               </div>
 
               <ul className="space-y-2.5 text-xs text-stone-700 pt-3 border-t border-amber-100">
