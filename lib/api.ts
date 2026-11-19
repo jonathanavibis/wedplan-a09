@@ -45,6 +45,8 @@ export const api = {
       request<any>('/auth/me', { method: 'GET' }),
     updateProfile: (payload: any) =>
       request<any>('/auth/profile', { method: 'PUT', body: JSON.stringify(payload) }),
+    changePassword: (payload: { oldPassword: string; newPassword: string; confirmPassword: string }) =>
+      request<any>('/auth/change-password', { method: 'PUT', body: JSON.stringify(payload) }),
   },
 
   // Services
