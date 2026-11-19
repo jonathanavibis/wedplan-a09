@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/context/AuthContext';
-import { Heart, Lock, Mail, ArrowRight, UserCheck } from 'lucide-react';
+import { Heart, Lock, Mail, ArrowRight, UserCheck, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 function LoginFormContent() {
@@ -57,6 +57,22 @@ function LoginFormContent() {
     }
   };
 
+  const handleFillCredentials = (role: 'Admin' | 'Vendor' | 'Customer') => {
+    if (role === 'Admin') {
+      setEmail('admin@wedplan.com');
+      setPassword('wpadmin123');
+      toast.success('Admin credentials loaded!');
+    } else if (role === 'Vendor') {
+      setEmail('vendor@wedplan.com');
+      setPassword('wpvendor123');
+      toast.success('Vendor credentials loaded!');
+    } else if (role === 'Customer') {
+      setEmail('customer@wedplan.com');
+      setPassword('wpcustomer123');
+      toast.success('Customer credentials loaded!');
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-rose-50/60 via-white to-white">
       <Navbar />
@@ -73,6 +89,37 @@ function LoginFormContent() {
             <p className="text-xs sm:text-sm text-stone-500">
               Sign in to manage your wedding plans, bookings, or vendor storefront.
             </p>
+          </div>
+
+          {/* 1-Click Test Credentials */}
+          <div className="rounded-2xl bg-rose-50/70 border border-rose-200/80 p-3.5 sm:p-4 text-center space-y-2.5">
+            <div className="flex items-center justify-center gap-1.5 text-rose-900 text-xs font-black uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-rose-600 fill-rose-500" />
+              <span>1-CLICK TEST CREDENTIALS</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => handleFillCredentials('Admin')}
+                className="py-2 px-3 bg-white hover:bg-rose-50 hover:border-rose-300 text-stone-800 font-semibold text-xs sm:text-sm rounded-full border border-stone-200 shadow-xs transition cursor-pointer text-center"
+              >
+                Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => handleFillCredentials('Vendor')}
+                className="py-2 px-3 bg-white hover:bg-rose-50 hover:border-rose-300 text-stone-800 font-semibold text-xs sm:text-sm rounded-full border border-stone-200 shadow-xs transition cursor-pointer text-center"
+              >
+                Vendor
+              </button>
+              <button
+                type="button"
+                onClick={() => handleFillCredentials('Customer')}
+                className="py-2 px-3 bg-white hover:bg-rose-50 hover:border-rose-300 text-stone-800 font-semibold text-xs sm:text-sm rounded-full border border-stone-200 shadow-xs transition cursor-pointer text-center"
+              >
+                Customer
+              </button>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
