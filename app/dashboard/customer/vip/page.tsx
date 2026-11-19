@@ -23,26 +23,29 @@ import {
 
 export default function CustomerVipPassPage() {
   const { user } = useAuth();
-  const [upgrading, setUpgrading] = useState(false);
+  const [upgradingPlan, setUpgradingPlan] = useState<string | null>(null);
   const [callbackRequested, setCallbackRequested] = useState(false);
   const [phoneInput, setPhoneInput] = useState('');
 
-  const isVip = user?.subscriptionPlan === 'premium';
+  const currentPlan = (user?.subscriptionPlan || 'starter').toLowerCase();
+  const isVip = currentPlan === 'vip';
+  const isPremium = currentPlan === 'premium';
+  const isStarter = !isVip && !isPremium;
 
-  const handleUpgradeToVip = async () => {
-    setUpgrading(true);
+  const handleUpgrade = async (plan: 'premium' | 'vip') => {
+    setUpgradingPlan(plan);
     try {
-      const data = await api.transactions.createCheckoutSession();
+      const data = await api.transactions.createCheckoutSession({ plan });
       if (data.success && data.url) {
-        toast.success('Redirecting to secure Stripe Checkout...');
+        toast.success(`Redirecting to secure Stripe Checkout for ${plan.toUpperCase()}...`);
         window.location.href = data.url;
       } else {
         toast.error(data.message || 'Could not initiate checkout session.');
-        setUpgrading(false);
+        setUpgradingPlan(null);
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to initialize Stripe checkout.');
-      setUpgrading(false);
+      setUpgradingPlan(null);
     }
   };
 
@@ -57,7 +60,7 @@ export default function CustomerVipPassPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -65,23 +68,24 @@ export default function CustomerVipPassPage() {
             <Crown className="w-3.5 h-3.5 fill-amber-500 text-amber-600" />
             <span>Bride & Groom Luxury Experience</span>
           </div>
-          <h1 className="text-3xl font-serif font-bold text-stone-900">VIP Concierge & Premium Support</h1>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900">
+            Subscription Plans & VIP Concierge
+          </h1>
           <p className="text-xs sm:text-sm text-stone-500 mt-1 max-w-2xl">
-            Experience stress-free wedding planning with dedicated personal planners, priority booking queues, and luxury vendor perks.
+            Choose the perfect support tier for your dream wedding. Upgrade to get dedicated planners, priority booking queues, and exclusive partner perks.
           </p>
         </div>
 
-        {isVip && (
+        {(isVip || isPremium) && (
           <div className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white px-4 py-2 rounded-2xl shadow-sm text-xs font-bold self-start md:self-center">
             <Sparkles className="w-4 h-4 fill-white" />
-            <span>VIP Active Member</span>
+            <span>{isVip ? 'VIP Concierge Member' : 'Premium Member'}</span>
           </div>
         )}
       </div>
 
-      {/* Main Status & Plan Showcase */}
-      {isVip ? (
-        /* ==================== ACTIVE VIP MEMBER DASHBOARD ==================== */
+      {/* If VIP Member: Show Active Concierge Dashboard */}
+      {isVip && (
         <div className="bg-gradient-to-br from-amber-50 via-white to-rose-50/40 rounded-3xl p-6 sm:p-8 border-2 border-amber-300 shadow-md space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-200/60 pb-6">
             <div className="flex items-center gap-4">
@@ -113,203 +117,300 @@ export default function CustomerVipPassPage() {
 
           {/* Concierge Hotline Channels */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-2xl bg-white border border-stone-200/80 shadow-2xs space-y-2">
-              <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
-                <Headphones className="w-4 h-4" />
+            <div className="p-4 rounded-2xl bg-white border border-amber-200/70 shadow-xs space-y-2">
+              <div className="flex items-center gap-2 text-stone-900 font-bold text-xs">
+                <PhoneCall className="w-4 h-4 text-amber-600" />
+                <span>Dedicated Hotline</span>
               </div>
-              <h3 className="text-sm font-bold text-stone-900">Direct VIP Planner</h3>
-              <p className="text-xs text-stone-500">Your designated senior planner is Sarah Jenkins.</p>
-              <a
-                href="mailto:concierge@wedplan.luxury"
-                className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700"
-              >
-                <span>Email Concierge</span>
-                <ArrowRight className="w-3 h-3" />
-              </a>
+              <p className="text-xs text-stone-500">Direct VIP line to senior planners</p>
+              <p className="text-sm font-mono font-bold text-amber-900">+1 (800) 933-PLAN</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-stone-200/80 shadow-2xs space-y-2">
-              <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
-                <PhoneCall className="w-4 h-4" />
+            <div className="p-4 rounded-2xl bg-white border border-amber-200/70 shadow-xs space-y-2">
+              <div className="flex items-center gap-2 text-stone-900 font-bold text-xs">
+                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                <span>Instant Chat</span>
               </div>
-              <h3 className="text-sm font-bold text-stone-900">Priority Hotline</h3>
-              <p className="text-xs text-stone-500">Immediate telephone assistance for booking urgencies.</p>
-              <span className="text-xs font-mono font-bold text-stone-800">+1 (800) WED-LUXE</span>
+              <p className="text-xs text-stone-500">Live planner messaging on WhatsApp</p>
+              <span className="inline-block px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold">
+                Online &bull; Avg 2m response
+              </span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border border-stone-200/80 shadow-2xs space-y-2">
-              <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <Zap className="w-4 h-4" />
+            <div className="p-4 rounded-2xl bg-white border border-amber-200/70 shadow-xs space-y-2">
+              <div className="flex items-center gap-2 text-stone-900 font-bold text-xs">
+                <Mail className="w-4 h-4 text-rose-600" />
+                <span>Contract Audit Email</span>
               </div>
-              <h3 className="text-sm font-bold text-stone-900">Fast-Track Responses</h3>
-              <p className="text-xs text-stone-500">Vendor responses guaranteed within 4 business hours.</p>
-              <span className="text-xs font-bold text-emerald-700">Priority Dispatch Active</span>
+              <p className="text-xs text-stone-500">Send vendor quotes for verification</p>
+              <p className="text-xs font-mono font-bold text-stone-700">vip-contracts@wedplan.com</p>
             </div>
           </div>
 
-          {/* Request Instant Concierge Call Form */}
-          <div className="p-5 rounded-2xl bg-white border border-amber-200 shadow-2xs">
-            <h3 className="text-sm font-bold text-stone-900 mb-1 flex items-center gap-2">
-              <MessageCircle className="w-4 h-4 text-amber-600" />
-              <span>Need help right now? Request an Instant Planner Callback</span>
-            </h3>
-            <p className="text-xs text-stone-500 mb-4">
-              Enter your contact number and our VIP wedding planner team will contact you to assist with vendor recommendations or date scheduling.
-            </p>
+          {/* Request Instant Callback */}
+          <div className="p-5 rounded-2xl bg-amber-100/50 border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-0.5 text-center sm:text-left">
+              <h4 className="text-xs font-bold text-amber-950 uppercase tracking-wider">
+                Request Immediate Phone Call
+              </h4>
+              <p className="text-xs text-amber-800">
+                Need urgent advice on venue or budget? Have a planner call you in 15 minutes.
+              </p>
+            </div>
 
             {callbackRequested ? (
-              <div className="p-3 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-semibold flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Request received! An expert planner will call {phoneInput} shortly.</span>
+              <div className="flex items-center gap-2 text-emerald-800 bg-emerald-100 px-4 py-2 rounded-xl text-xs font-bold">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Call scheduled! Expect a ring shortly.</span>
               </div>
             ) : (
-              <form onSubmit={handleRequestCallback} className="flex flex-col sm:flex-row gap-3">
+              <form onSubmit={handleRequestCallback} className="flex items-center gap-2 w-full sm:w-auto">
                 <input
                   type="tel"
-                  placeholder="Enter your phone number (e.g. +1 555-0199)"
+                  placeholder="+1 (555) 000-0000"
                   value={phoneInput}
                   onChange={(e) => setPhoneInput(e.target.value)}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-stone-200 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  className="px-3 py-2 rounded-xl border border-amber-300 text-xs bg-white text-stone-900 placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500"
                 />
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition"
+                  className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition shadow-xs whitespace-nowrap cursor-pointer"
                 >
-                  Request Callback
+                  Call Me
                 </button>
               </form>
             )}
           </div>
         </div>
-      ) : (
-        /* ==================== VIP PLAN UPGRADE CARD ==================== */
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Plan Pricing & Purchase Card */}
-          <div className="md:col-span-2 bg-gradient-to-br from-amber-50/70 via-white to-white rounded-3xl p-6 sm:p-8 border-2 border-amber-300 shadow-xl space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-amber-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-xs">
-              Couple Exclusive
-            </div>
+      )}
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Crown className="w-6 h-6 text-amber-500 fill-amber-500" />
-                <h2 className="text-2xl font-serif font-bold text-stone-900">
-                  WedPlan VIP Concierge Pass
-                </h2>
-              </div>
-              <p className="text-xs text-stone-600 max-w-xl leading-relaxed">
-                Enjoy red-carpet planning treatment. From vendor negotiations and schedule coordination to emergency support on your big day, our certified planners are at your service.
-              </p>
-            </div>
+      {/* 3-Tier Customer Pricing Comparison */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-serif font-bold text-stone-900">
+          {isVip ? 'Compare Customer Membership Plans' : 'Choose Your Wedding Planning Plan'}
+        </h2>
 
-            <div className="flex items-baseline gap-2 pt-2">
-              <span className="text-4xl font-serif font-bold text-stone-900">$29</span>
-              <span className="text-xs text-stone-500 font-medium">/ full year access (one-time fee)</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-700 pt-2 border-t border-amber-100">
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong>24/7 Dedicated Concierge:</strong> Chat or call with licensed wedding planners anytime.
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong>Priority Booking:</strong> Requests pushed to the front of vendor queues with VIP badge.
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong>Contract & Quote Review:</strong> We verify quotes so you never pay hidden fees.
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong>15% Partner Discounts:</strong> Exclusive coupons on venues, photographers, and dresses.
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong>Custom Master Checklist:</strong> Tailored budget projection and planning timeline.
-                </span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong>Money-Back Guarantee:</strong> 100% satisfaction guarantee within 14 days.
-                </span>
-              </div>
-            </div>
-
-            <div className="pt-4 flex flex-col sm:flex-row items-center gap-4">
-              <button
-                onClick={handleUpgradeToVip}
-                disabled={upgrading}
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-amber-200 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-              >
-                <Sparkles className="w-4 h-4 fill-white" />
-                <span>{upgrading ? 'Connecting to Stripe...' : 'Upgrade to VIP ($29 USD)'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <div className="flex items-center gap-2 text-[11px] text-stone-500">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Encrypted 256-bit Stripe Checkout</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Standard Free Experience Comparison */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/80 shadow-xs flex flex-col justify-between space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          {/* Tier 1: Basic Starter */}
+          <div
+            className={`bg-white rounded-3xl p-6 sm:p-7 border ${
+              isStarter ? 'border-stone-400 ring-2 ring-stone-200' : 'border-stone-200'
+            } shadow-xs space-y-6 flex flex-col justify-between`}
+          >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase font-bold text-stone-500 tracking-wider">Standard Couple</span>
-                <span className="text-[11px] font-bold text-stone-600 bg-stone-100 px-2.5 py-0.5 rounded-full">
-                  Current
+                <span className="text-[11px] uppercase font-black text-stone-400 tracking-wider">
+                  Tier 1 &bull; Explorer
                 </span>
+                {isStarter && (
+                  <span className="text-[10px] font-bold text-stone-700 bg-stone-100 px-3 py-1 rounded-full">
+                    Current Plan
+                  </span>
+                )}
               </div>
 
               <div>
-                <h3 className="text-xl font-serif font-bold text-stone-900">Free Tier</h3>
-                <p className="text-2xl font-bold text-stone-900 mt-1">$0</p>
+                <h3 className="text-xl font-serif font-bold text-stone-900">Basic Starter</h3>
+                <p className="text-3xl font-bold text-stone-900 mt-2">
+                  $0 <span className="text-xs font-normal text-stone-400">/ forever</span>
+                </p>
+                <p className="text-xs text-stone-500 mt-1">
+                  For couples browsing vendors and exploring wedding inspiration.
+                </p>
               </div>
 
-              <ul className="space-y-3 text-xs text-stone-500 border-t border-stone-100 pt-3">
+              <ul className="space-y-2.5 text-xs text-stone-600 pt-3 border-t border-stone-100">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-stone-400" />
-                  <span>Standard search & browse</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Unlimited vendor search & portfolio browsing</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-stone-400" />
-                  <span>Standard booking queue</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Submit standard booking inquiries</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Personal dashboard itinerary tracker</span>
                 </li>
                 <li className="flex items-center gap-2 text-stone-400 line-through">
-                  <span>24/7 Concierge Hotline</span>
+                  <span>Priority booking response queue</span>
                 </li>
                 <li className="flex items-center gap-2 text-stone-400 line-through">
-                  <span>Contract & Quote Review</span>
-                </li>
-                <li className="flex items-center gap-2 text-stone-400 line-through">
-                  <span>Exclusive VIP Partner Discounts</span>
+                  <span>24/7 Personal Concierge Planner</span>
                 </li>
               </ul>
             </div>
 
-            <p className="text-[11px] text-stone-400 text-center">
-              Upgrade anytime when you are ready to book vendors.
-            </p>
+            <button
+              disabled
+              className="w-full py-3 rounded-2xl border border-stone-200 text-stone-400 font-semibold text-xs cursor-not-allowed bg-stone-50 text-center"
+            >
+              {isStarter ? 'Active Default Plan' : 'Free Tier'}
+            </button>
+          </div>
+
+          {/* Tier 2: Premium (Popular) */}
+          <div
+            className={`bg-gradient-to-b from-rose-50/40 via-white to-white rounded-3xl p-6 sm:p-7 border-2 ${
+              isPremium
+                ? 'border-rose-500 ring-4 ring-rose-100'
+                : 'border-rose-300 hover:border-rose-400'
+            } shadow-xl space-y-6 flex flex-col justify-between relative overflow-hidden`}
+          >
+            {/* Most Popular Badge */}
+            <div className="absolute top-4 right-4 bg-gradient-to-r from-rose-600 to-rose-700 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-xs flex items-center gap-1">
+              <Sparkles className="w-3 h-3 fill-white" />
+              <span>Popular</span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase font-black text-rose-600 tracking-wider">
+                  Tier 2 &bull; Smart Couple
+                </span>
+                {isPremium && (
+                  <span className="text-[10px] font-bold text-rose-800 bg-rose-100 px-3 py-1 rounded-full">
+                    Active Subscription
+                  </span>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-xl font-serif font-bold text-stone-900">Premium (Popular)</h3>
+                <p className="text-3xl font-bold text-rose-600 mt-2">
+                  $29 <span className="text-xs font-normal text-stone-500">/ year</span>
+                </p>
+                <p className="text-xs text-stone-500 mt-1">
+                  The most popular pass for couples actively locking in top wedding vendors.
+                </p>
+              </div>
+
+              <ul className="space-y-2.5 text-xs text-stone-700 pt-3 border-t border-rose-100">
+                <li className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span><strong>Priority Booking Queue</strong> (front of vendor inbox)</span>
+                </li>
+                <li className="flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>Personalized Wedding Budget & Timeline Planner</span>
+                </li>
+                <li className="flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>Verified Couple Badge for instant vendor trust</span>
+                </li>
+                <li className="flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>Exclusive Partner Discounts (Save up to $500)</span>
+                </li>
+                <li className="flex items-center gap-2 text-stone-400 line-through">
+                  <span>24/7 Dedicated Hotline & Phone Calls</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              {isPremium ? (
+                <div className="w-full py-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs text-center flex items-center justify-center gap-2">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Active Premium Pass</span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleUpgrade('premium')}
+                  disabled={upgradingPlan !== null}
+                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white font-bold text-xs shadow-md shadow-rose-200 transition flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                >
+                  <span>{upgradingPlan === 'premium' ? 'Connecting to Stripe...' : 'Upgrade to Premium ($29)'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Tier 3: VIP Concierge */}
+          <div
+            className={`bg-gradient-to-b from-amber-50/60 via-white to-white rounded-3xl p-6 sm:p-7 border-2 ${
+              isVip
+                ? 'border-amber-400 ring-4 ring-amber-100'
+                : 'border-amber-300 hover:border-amber-400'
+            } shadow-xl space-y-6 flex flex-col justify-between relative overflow-hidden`}
+          >
+            {/* VIP Badge */}
+            <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-xs flex items-center gap-1">
+              <Crown className="w-3 h-3 fill-white" />
+              <span>VIP Concierge</span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase font-black text-amber-700 tracking-wider">
+                  Tier 3 &bull; Red Carpet
+                </span>
+                {isVip && (
+                  <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
+                    Active Subscription
+                  </span>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-xl font-serif font-bold text-stone-900">VIP Concierge</h3>
+                <p className="text-3xl font-bold text-amber-600 mt-2">
+                  $79 <span className="text-xs font-normal text-stone-500">/ year</span>
+                </p>
+                <p className="text-xs text-stone-500 mt-1">
+                  Full white-glove planning concierge service with a certified planner by your side.
+                </p>
+              </div>
+
+              <ul className="space-y-2.5 text-xs text-stone-700 pt-3 border-t border-amber-100">
+                <li className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span><strong>All Premium perks</strong> included</span>
+                </li>
+                <li className="flex items-center gap-2 font-semibold">
+                  <Headphones className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span><strong>24/7 Personal Planner Hotline</strong> (Phone & WhatsApp)</span>
+                </li>
+                <li className="flex items-center gap-2 font-medium">
+                  <FileCheck className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>Contract & Quote Review before you pay deposits</span>
+                </li>
+                <li className="flex items-center gap-2 font-medium">
+                  <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>Emergency Vendor Backup Guarantee</span>
+                </li>
+                <li className="flex items-center gap-2 font-medium">
+                  <Crown className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>Gold VIP Badge + 15% luxury partner discounts</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              {isVip ? (
+                <div className="w-full py-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 font-bold text-xs text-center flex items-center justify-center gap-2">
+                  <Crown className="w-4 h-4" />
+                  <span>Active VIP Concierge Pass</span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleUpgrade('vip')}
+                  disabled={upgradingPlan !== null}
+                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs shadow-md shadow-amber-200 transition flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                >
+                  <span>{upgradingPlan === 'vip' ? 'Connecting to Stripe...' : 'Upgrade to VIP Concierge ($79)'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Feature Breakdown Grid */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-serif font-bold text-stone-900">Why Couples Choose VIP Concierge</h2>
+      <div className="space-y-4 pt-4 border-t border-stone-100">
+        <h2 className="text-xl font-serif font-bold text-stone-900">Why Couples Choose WedPlan Subscriptions</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-2xs space-y-2">
@@ -328,7 +429,7 @@ export default function CustomerVipPassPage() {
             </div>
             <h3 className="text-sm font-bold text-stone-900">Priority Vendor Response</h3>
             <p className="text-xs text-stone-500 leading-relaxed">
-              Top wedding vendors receive dozens of inquiries daily. Your requests carry a glowing VIP Badge and priority notification.
+              Top wedding vendors receive dozens of inquiries daily. Your requests carry a glowing badge and priority notification.
             </p>
           </div>
 
@@ -338,7 +439,7 @@ export default function CustomerVipPassPage() {
             </div>
             <h3 className="text-sm font-bold text-stone-900">Exclusive Luxury Discounts</h3>
             <p className="text-xs text-stone-500 leading-relaxed">
-              Unlock negotiated rates and VIP perks, saving an average of $650 across venue, photography, and catering packages.
+              Unlock negotiated rates and perks, saving an average of $650 across venue, photography, and catering packages.
             </p>
           </div>
 

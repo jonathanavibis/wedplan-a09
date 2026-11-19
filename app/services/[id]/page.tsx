@@ -153,12 +153,15 @@ export default function ServiceDetailsPage({ params }: { params: Promise<{ id: s
     );
   }
 
-  const images =
-    service.images && service.images.length > 0
-      ? service.images.filter(Boolean)
-      : ['https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'];
+  const validImages = (service.images || []).filter(
+    (img: string) => typeof img === 'string' && img.trim().length > 0
+  );
+  const fallbackMain =
+    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80';
+  const images = validImages.length > 0 ? validImages : [fallbackMain];
+  const safeActiveIndex = activeImageIndex >= 0 && activeImageIndex < images.length ? activeImageIndex : 0;
   const vendor = service.vendorId;
-  const isPremiumVendor = vendor?.subscriptionPlan === 'premium';
+  const isPremiumVendor = vendor?.subscriptionPlan === 'premium' || vendor?.subscriptionPlan === 'vip';
 
   return (
     <div className="flex flex-col min-h-screen bg-[#fffbf9]">
@@ -196,11 +199,11 @@ export default function ServiceDetailsPage({ params }: { params: Promise<{ id: s
             {/* Main Featured Image */}
             <div className="relative h-[380px] sm:h-[480px] w-full rounded-3xl overflow-hidden shadow-md bg-stone-100">
               <img
-                src={images[activeImageIndex]}
+                src={images[safeActiveIndex]}
                 alt={service.serviceName}
                 onError={(e) => {
-                  e.currentTarget.src =
-                    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80';
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = fallbackMain;
                 }}
                 className="w-full h-full object-cover"
               />
@@ -218,13 +221,14 @@ export default function ServiceDetailsPage({ params }: { params: Promise<{ id: s
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
                     className={`relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border-2 transition ${
-                      activeImageIndex === idx ? 'border-rose-500 scale-105' : 'border-transparent opacity-75 hover:opacity-100'
+                      safeActiveIndex === idx ? 'border-rose-500 scale-105' : 'border-transparent opacity-75 hover:opacity-100'
                     }`}
                   >
                     <img
                       src={img}
                       alt={`Thumbnail ${idx + 1}`}
                       onError={(e) => {
+                        e.currentTarget.onerror = null;
                         e.currentTarget.src =
                           'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80';
                       }}
@@ -300,6 +304,11 @@ export default function ServiceDetailsPage({ params }: { params: Promise<{ id: s
                 <img
                   src={vendor.image}
                   alt={vendor.name}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src =
+                      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+                  }}
                   className="w-16 h-16 rounded-2xl object-cover ring-2 ring-rose-100"
                 />
               ) : (

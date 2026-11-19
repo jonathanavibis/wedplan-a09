@@ -40,13 +40,16 @@ export default function ServiceCard({ service }: { service: ServiceItem }) {
     }
   };
 
+  const fallbackImg =
+    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80';
+
   const mainImage =
-    service.images && service.images.length > 0
+    service.images && service.images.length > 0 && typeof service.images[0] === 'string' && service.images[0].trim().length > 0
       ? service.images[0]
-      : 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80';
+      : fallbackImg;
 
   const vendorName = service.vendorId?.businessName || service.vendorId?.name || 'Verified Vendor';
-  const isPremiumVendor = service.vendorId?.subscriptionPlan === 'premium';
+  const isPremiumVendor = service.vendorId?.subscriptionPlan === 'premium' || service.vendorId?.subscriptionPlan === 'vip';
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-rose-100/80 shadow-xs hover:shadow-xl hover:border-rose-200 transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
@@ -56,8 +59,8 @@ export default function ServiceCard({ service }: { service: ServiceItem }) {
           src={mainImage}
           alt={service.serviceName}
           onError={(e) => {
-            e.currentTarget.src =
-              'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80';
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = fallbackImg;
           }}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
         />
@@ -112,6 +115,11 @@ export default function ServiceCard({ service }: { service: ServiceItem }) {
               <img
                 src={service.vendorId.image}
                 alt={vendorName}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src =
+                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80';
+                }}
                 className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-rose-200"
               />
             ) : (

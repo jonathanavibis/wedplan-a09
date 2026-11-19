@@ -49,12 +49,12 @@ export default function VendorAddServicePage() {
     }
 
     if (imageFiles.length === 0) {
-      toast.error('Please upload at least one image using ImgBB.');
+      toast.error('Please upload at least one service image.');
       return;
     }
 
     setSubmitting(true);
-    setUploadProgress('Uploading service images to ImgBB...');
+    setUploadProgress('Optimizing & uploading portfolio images...');
 
     try {
       // Upload all images to ImgBB
@@ -169,15 +169,15 @@ export default function VendorAddServicePage() {
             />
           </div>
 
-          {/* Image Upload (ImgBB) */}
+          {/* Image Upload (Portfolio) */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
-              Portfolio Images (Uploaded via ImgBB) <span className="text-rose-500">*</span>
+              Portfolio Images (Auto-Optimized Upload) <span className="text-rose-500">*</span>
             </label>
             <div className="border-2 border-dashed border-rose-200 hover:border-rose-400 rounded-2xl p-6 text-center bg-rose-50/20 transition">
               <Upload className="w-8 h-8 text-rose-500 mx-auto mb-2" />
               <p className="text-xs text-stone-700 font-semibold mb-1">
-                Choose images to upload to ImgBB
+                Choose images for your service showcase
               </p>
               <p className="text-[11px] text-stone-500 mb-4">
                 Supports JPG, PNG, WEBP (multiple files allowed)

@@ -55,10 +55,10 @@ export default function ProfileSettingsPage() {
       let finalImageUrl = user?.image || '';
 
       if (newImageFile) {
-        toast.loading('Uploading new avatar to ImgBB...', { id: 'img-upload' });
+        toast.loading('Uploading and optimizing avatar...', { id: 'img-upload' });
         try {
           finalImageUrl = await uploadImageToImgBB(newImageFile);
-          toast.success('Avatar uploaded!', { id: 'img-upload' });
+          toast.success('Avatar uploaded successfully!', { id: 'img-upload' });
         } catch {
           toast.error('Image upload failed, keeping current avatar.', { id: 'img-upload' });
         }
@@ -151,6 +151,11 @@ export default function ProfileSettingsPage() {
               <img
                 src={imagePreview}
                 alt={name}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src =
+                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+                }}
                 className="w-20 h-20 rounded-3xl object-cover ring-4 ring-rose-100 shadow-sm"
               />
             ) : (
