@@ -26,6 +26,7 @@ export default function CustomerVipPassPage() {
   const [upgradingPlan, setUpgradingPlan] = useState<string | null>(null);
   const [callbackRequested, setCallbackRequested] = useState(false);
   const [phoneInput, setPhoneInput] = useState('');
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('yearly');
 
   const currentPlan = (user?.subscriptionPlan || 'starter').toLowerCase();
   const isVip = currentPlan === 'vip';
@@ -35,9 +36,9 @@ export default function CustomerVipPassPage() {
   const handleUpgrade = async (plan: 'premium' | 'vip') => {
     setUpgradingPlan(plan);
     try {
-      const data = await api.transactions.createCheckoutSession({ plan });
+      const data = await api.transactions.createCheckoutSession({ plan, interval: billingInterval });
       if (data.success && data.url) {
-        toast.success(`Redirecting to secure Stripe Checkout for ${plan.toUpperCase()}...`);
+        toast.success(`Redirecting to secure Stripe Checkout for ${plan.toUpperCase()} (${billingInterval})...`);
         window.location.href = data.url;
       } else {
         toast.error(data.message || 'Could not initiate checkout session.');
@@ -185,10 +186,45 @@ export default function CustomerVipPassPage() {
       )}
 
       {/* 3-Tier Customer Pricing Comparison */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-serif font-bold text-stone-900">
-          {isVip ? 'Compare Customer Membership Plans' : 'Choose Your Wedding Planning Plan'}
-        </h2>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h2 className="text-xl font-serif font-bold text-stone-900">
+            {isVip ? 'Compare Customer Membership Plans' : 'Choose Your Wedding Planning Plan'}
+          </h2>
+
+          {/* Monthly / Yearly Billing Toggle */}
+          <div className="bg-stone-100 p-1.5 rounded-full inline-flex items-center gap-1 border border-stone-200 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setBillingInterval('monthly')}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                billingInterval === 'monthly'
+                  ? 'bg-white text-stone-900 shadow-sm'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              type="button"
+              onClick={() => setBillingInterval('yearly')}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                billingInterval === 'yearly'
+                  ? 'bg-rose-600 text-white shadow-sm'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              <span>Yearly</span>
+              <span
+                className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${
+                  billingInterval === 'yearly' ? 'bg-white text-rose-600' : 'bg-rose-100 text-rose-700'
+                }`}
+              >
+                Save 50%
+              </span>
+            </button>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* Tier 1: Basic Starter */}
@@ -278,10 +314,15 @@ export default function CustomerVipPassPage() {
               <div>
                 <h3 className="text-xl font-serif font-bold text-stone-900">Premium (Popular)</h3>
                 <p className="text-3xl font-bold text-rose-600 mt-2">
-                  $29 <span className="text-xs font-normal text-stone-500">/ year</span>
+                  {billingInterval === 'monthly' ? '$5' : '$29'}
+                  <span className="text-xs font-normal text-stone-500">
+                    {billingInterval === 'monthly' ? ' / month' : ' / year'}
+                  </span>
                 </p>
                 <p className="text-xs text-stone-500 mt-1">
-                  The most popular pass for couples actively locking in top wedding vendors.
+                  {billingInterval === 'monthly'
+                    ? 'Billed monthly ($60/yr)'
+                    : 'Only $2.42/mo (Save 50% vs monthly)'}
                 </p>
               </div>
 
@@ -320,7 +361,11 @@ export default function CustomerVipPassPage() {
                   disabled={upgradingPlan !== null}
                   className="w-full py-3.5 rounded-full bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white font-bold text-xs shadow-md shadow-rose-200 transition flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
-                  <span>{upgradingPlan === 'premium' ? 'Connecting to Stripe...' : 'Upgrade to Premium ($29)'}</span>
+                  <span>
+                    {upgradingPlan === 'premium'
+                      ? 'Connecting to Stripe...'
+                      : `Upgrade to Premium (${billingInterval === 'monthly' ? '$5/mo' : '$29/yr'})`}
+                  </span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}
@@ -356,10 +401,15 @@ export default function CustomerVipPassPage() {
               <div>
                 <h3 className="text-xl font-serif font-bold text-stone-900">VIP Concierge</h3>
                 <p className="text-3xl font-bold text-amber-600 mt-2">
-                  $79 <span className="text-xs font-normal text-stone-500">/ year</span>
+                  {billingInterval === 'monthly' ? '$12' : '$79'}
+                  <span className="text-xs font-normal text-stone-500">
+                    {billingInterval === 'monthly' ? ' / month' : ' / year'}
+                  </span>
                 </p>
                 <p className="text-xs text-stone-500 mt-1">
-                  Full white-glove planning concierge service with a certified planner by your side.
+                  {billingInterval === 'monthly'
+                    ? 'Billed monthly ($144/yr)'
+                    : 'Only $6.58/mo (Save over 45% vs monthly)'}
                 </p>
               </div>
 
@@ -399,7 +449,11 @@ export default function CustomerVipPassPage() {
                   disabled={upgradingPlan !== null}
                   className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs shadow-md shadow-amber-200 transition flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
-                  <span>{upgradingPlan === 'vip' ? 'Connecting to Stripe...' : 'Upgrade to VIP Concierge ($79)'}</span>
+                  <span>
+                    {upgradingPlan === 'vip'
+                      ? 'Connecting to Stripe...'
+                      : `Upgrade to VIP Concierge (${billingInterval === 'monthly' ? '$12/mo' : '$79/yr'})`}
+                  </span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}

@@ -99,7 +99,7 @@ export const api = {
 
   // Transactions & Stripe
   transactions: {
-    createCheckoutSession: (payload?: { plan?: 'premium' | 'vip' }) =>
+    createCheckoutSession: (payload?: { plan?: 'premium' | 'vip'; interval?: 'monthly' | 'yearly' }) =>
       request<any>('/transactions/create-checkout-session', {
         method: 'POST',
         body: JSON.stringify(payload || {}),

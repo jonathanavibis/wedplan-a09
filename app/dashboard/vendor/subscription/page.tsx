@@ -21,6 +21,7 @@ export default function VendorSubscriptionPage() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [upgradingPlan, setUpgradingPlan] = useState<string | null>(null);
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('yearly');
 
   useEffect(() => {
     async function loadTransactions() {
@@ -41,9 +42,9 @@ export default function VendorSubscriptionPage() {
   const handleUpgrade = async (plan: 'premium' | 'vip') => {
     setUpgradingPlan(plan);
     try {
-      const data = await api.transactions.createCheckoutSession({ plan });
+      const data = await api.transactions.createCheckoutSession({ plan, interval: billingInterval });
       if (data.success && data.url) {
-        toast.success(`Redirecting to Stripe Checkout for ${plan.toUpperCase()}...`);
+        toast.success(`Redirecting to Stripe Checkout for ${plan.toUpperCase()} (${billingInterval})...`);
         window.location.href = data.url;
       } else {
         toast.error(data.message || 'Failed to start checkout session.');
@@ -62,13 +63,48 @@ export default function VendorSubscriptionPage() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900">
-          Subscription & Vendor Memberships
+      <div className="text-center max-w-2xl mx-auto">
+        <h1 className="text-2xl sm:text-4xl font-serif font-bold text-stone-900">
+          Vendor Membership Plans
         </h1>
-        <p className="text-xs sm:text-sm text-stone-500 mt-1">
-          Select the optimal plan to scale your wedding business with increased visibility and unlimited listings.
+        <p className="text-xs sm:text-sm text-stone-500 mt-2">
+          Select the optimal plan to scale your wedding business with increased visibility, unlimited listings, and priority customer placement.
         </p>
+      </div>
+
+      {/* Monthly / Yearly Billing Toggle */}
+      <div className="flex justify-center">
+        <div className="bg-stone-100 p-1.5 rounded-full inline-flex items-center gap-1 border border-stone-200">
+          <button
+            type="button"
+            onClick={() => setBillingInterval('monthly')}
+            className={`px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              billingInterval === 'monthly'
+                ? 'bg-white text-stone-900 shadow-sm'
+                : 'text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            Monthly Billing
+          </button>
+          <button
+            type="button"
+            onClick={() => setBillingInterval('yearly')}
+            className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              billingInterval === 'yearly'
+                ? 'bg-rose-600 text-white shadow-sm'
+                : 'text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <span>Annual Billing</span>
+            <span
+              className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                billingInterval === 'yearly' ? 'bg-white text-rose-600' : 'bg-rose-100 text-rose-700'
+              }`}
+            >
+              Save up to 55%
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* 3-Tier Plan Comparison Cards */}
@@ -160,10 +196,15 @@ export default function VendorSubscriptionPage() {
             <div>
               <h3 className="text-xl font-serif font-bold text-stone-900">Premium (Popular)</h3>
               <p className="text-3xl font-bold text-rose-600 mt-2">
-                $49 <span className="text-xs font-normal text-stone-500">/ year</span>
+                {billingInterval === 'monthly' ? '$9' : '$49'}
+                <span className="text-xs font-normal text-stone-500">
+                  {billingInterval === 'monthly' ? ' / month' : ' / year'}
+                </span>
               </p>
               <p className="text-xs text-stone-500 mt-1">
-                The most popular choice for growing studios wanting maximum inquiries.
+                {billingInterval === 'monthly'
+                  ? 'Billed monthly ($108/yr)'
+                  : 'Only $4.08/mo (Save over 50% vs monthly)'}
               </p>
             </div>
 
@@ -204,7 +245,11 @@ export default function VendorSubscriptionPage() {
                 disabled={upgradingPlan !== null}
                 className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white font-bold text-xs shadow-md shadow-rose-200 transition flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                <span>{upgradingPlan === 'premium' ? 'Connecting to Stripe...' : 'Upgrade to Premium ($49)'}</span>
+                <span>
+                  {upgradingPlan === 'premium'
+                    ? 'Connecting to Stripe...'
+                    : `Upgrade to Premium (${billingInterval === 'monthly' ? '$9/mo' : '$49/yr'})`}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
@@ -240,10 +285,15 @@ export default function VendorSubscriptionPage() {
             <div>
               <h3 className="text-xl font-serif font-bold text-stone-900">VIP Elite Partner</h3>
               <p className="text-3xl font-bold text-amber-600 mt-2">
-                $99 <span className="text-xs font-normal text-stone-500">/ year</span>
+                {billingInterval === 'monthly' ? '$19' : '$99'}
+                <span className="text-xs font-normal text-stone-500">
+                  {billingInterval === 'monthly' ? ' / month' : ' / year'}
+                </span>
               </p>
               <p className="text-xs text-stone-500 mt-1">
-                For established luxury brands demanding the highest visibility.
+                {billingInterval === 'monthly'
+                  ? 'Billed monthly ($228/yr)'
+                  : 'Only $8.25/mo (Save over 55% vs monthly)'}
               </p>
             </div>
 
@@ -285,7 +335,11 @@ export default function VendorSubscriptionPage() {
                 disabled={upgradingPlan !== null}
                 className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs shadow-md shadow-amber-200 transition flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
-                <span>{upgradingPlan === 'vip' ? 'Connecting to Stripe...' : 'Upgrade to VIP Elite ($99)'}</span>
+                <span>
+                  {upgradingPlan === 'vip'
+                    ? 'Connecting to Stripe...'
+                    : `Upgrade to VIP Elite (${billingInterval === 'monthly' ? '$19/mo' : '$99/yr'})`}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
